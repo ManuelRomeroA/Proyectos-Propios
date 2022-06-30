@@ -4,16 +4,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3bb91c1a-1e4a-4498-903e-e7c7a60a200c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Reto Semanal/1_EsUnAnagrama/app/src/main/java/com/example/esunanagrama/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/Reto Semanal/1_EsUnAnagrama/app/src/main/java/com/example/esunanagrama/MainActivity.kt" afterDir="false" />
-    </list>
+    <list default="true" id="3bb91c1a-1e4a-4498-903e-e7c7a60a200c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/Reto Semanal" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="2BHsdc3Jrz92GdWngrjTCFMMtjb" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
