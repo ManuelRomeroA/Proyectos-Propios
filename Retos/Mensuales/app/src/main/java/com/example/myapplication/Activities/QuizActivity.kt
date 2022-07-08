@@ -15,6 +15,12 @@ import com.example.myapplication.databinding.ActivityQuizBinding
 
 class QuizActivity : AppCompatActivity() {
 
+    private val questionList: MutableList<Question> = QuestionProvider.QuestionList
+    private var question: Question = questionList.random()
+    private var cont = 0
+    private val timer: CountDownTimer? = timer()
+    private val feedBackTimer: CountDownTimer? = feedBackTimer()
+
     private lateinit var binding: ActivityQuizBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,75 +30,120 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun quiz() {
-        val initTimer: Long = 30
+        buildQuestion(question, cont)
+
+        binding.btnResponse1.setOnClickListener {
+            if (selectionResponse1(question)) {
+                cont += 1
+                nextQuestion(questionList, cont)
+
+            } else {
+                timer?.cancel()
+                feedBackTimer?.start()
+            }
+
+        }
+        binding.btnResponse2.setOnClickListener {
+            if (selectionResponse2(question)) {
+                cont += 1
+                nextQuestion(questionList, cont)
+            } else {
+                timer?.cancel()
+                feedBackTimer?.start()
+            }
+        }
+        binding.btnResponse3.setOnClickListener {
+            if (selectionResponse3(question)) {
+                cont += 1
+                nextQuestion(questionList, cont)
+
+            } else {
+                timer?.cancel()
+                feedBackTimer?.start()
+            }
+        }
+    }
+
+    private fun nextQuestion(questionList: MutableList<Question>, cont: Int) {
+        goToResult(questionList, cont)
+        questionList.remove(question)
+        question = questionList.random()
+        buildQuestion(question, cont)
+    }
+
+    private fun timer(): CountDownTimer? {
+        val initTimer: Long = 31
         val timerMilisecond: Long = initTimer * 1000
-        val questionList: MutableList<Question> = QuestionProvider.QuestionList
-        var question: Question = questionList.random()
-        var cont = 0
-
-        buildQuestion(question)
-        binding.tvContador.text = cont.toString()
-
+        timer?.cancel()
         val timer = object : CountDownTimer(timerMilisecond, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val timerSeconds: Int = (millisUntilFinished / 1000).toInt()
                 binding.tvTimer.text = timerSeconds.toString()
-                binding.tvContador.text = cont.toString()
                 styleTime(timerSeconds)
             }
 
             override fun onFinish() {
                 Toast.makeText(this@QuizActivity, "El Telefono Vibra", Toast.LENGTH_LONG).show()
-                questionList.remove(question)
-                question = questionList.random()
-                buildQuestion(question)
-                quiz()
+                feedBackTimer?.start()
+
             }
         }.start()
-
-        binding.btnResponse1.setOnClickListener {
-            if (selectionResponse1(question)) {
-                cont += 1
-            }
-            goToResult(questionList, cont)
-            questionList.remove(question)
-            question = questionList.random()
-            buildQuestion(question)
-            timer.cancel()
-            timer.start()
-        }
-        binding.btnResponse2.setOnClickListener {
-            if (selectionResponse2(question)) {
-                cont += 1
-            }
-            goToResult(questionList, cont)
-            questionList.remove(question)
-            question = questionList.random()
-            buildQuestion(question)
-            timer.cancel()
-            timer.start()
-        }
-        binding.btnResponse3.setOnClickListener {
-            if (selectionResponse3(question)) {
-                cont += 1
-            }
-            goToResult(questionList, cont)
-            questionList.remove(question)
-            question = questionList.random()
-            buildQuestion(question)
-            timer.cancel()
-            timer.start()
-        }
+        return timer
     }
 
-    fun buildQuestion(question: Question?) {
-        if (question != null) {
-            binding.tvQuestion.text = question.question
-            binding.btnResponse1.text = question.response1
-            binding.btnResponse2.text = question.response2
-            binding.btnResponse3.text = question.response3
-            Glide.with(this).load(question.image).into(binding.ivQuestion)
+    private fun feedBackTimer(): CountDownTimer {
+        timer?.cancel()
 
+        val feedBackTimer = object : CountDownTimer(3000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                disableBtn()
+                when (question.answer) {
+                    question.response1 -> {
+                        binding.btnResponse1.setTextColor(Color.GREEN)
+                    }
+                    question.response2 -> {
+                        binding.btnResponse2.setTextColor(Color.GREEN)
+                    }
+                    question.response3 -> {
+                        binding.btnResponse3.setTextColor(Color.GREEN)
+                    }
+                }
+            }
+
+            override fun onFinish() {
+                nextQuestion(questionList, cont)
+
+            }
+        }
+        return feedBackTimer
+    }
+
+    fun buildQuestion(question: Question?, cont: Int) {
+        val tvQuestion = binding.tvQuestion
+        val tvCont = binding.tvContador
+        val btnResponse1 = binding.btnResponse1
+        val btnResponse2 = binding.btnResponse2
+        val btnResponse3 = binding.btnResponse3
+        enableBtn()
+        if (question != null) {
+            //Titulo
+            tvQuestion.text = question.question
+            //Response1
+            btnResponse1.text = question.response1
+            btnResponse1.setTextColor(Color.BLACK)
+            //Response2
+            btnResponse2.text = question.response2
+            btnResponse2.setTextColor(Color.BLACK)
+            //Response3
+            btnResponse3.text = question.response3
+            btnResponse3.setTextColor(Color.BLACK)
+            //Imagen
+            Glide.with(this).load(question.image).into(binding.ivQuestion)
+            //Contador
+            tvCont.text = cont.toString()
+            //Inicio Timer
+            timer?.cancel()
+            timer?.start()
         }
     }
 
@@ -137,7 +188,7 @@ class QuizActivity : AppCompatActivity() {
     private fun styleTime(timerSeconds: Int) {
         val styleTime = binding.tvTimer
         when (timerSeconds) {
-            in 16..30 -> {
+            in 16..31 -> {
                 styleTime.setTextColor(Color.GREEN)
                 styleTime.setBackgroundResource(R.drawable.shape_timer_green)
             }
@@ -145,6 +196,7 @@ class QuizActivity : AppCompatActivity() {
                 styleTime.setTextColor(Color.YELLOW)
                 styleTime.setBackgroundResource(R.drawable.shape_timer_yellow)
             }
+
             in 0..5 -> {
                 styleTime.setTextColor(Color.RED)
                 styleTime.setBackgroundResource(R.drawable.shape_timer_red)
@@ -152,6 +204,17 @@ class QuizActivity : AppCompatActivity() {
         }
     }
 
+    private fun disableBtn() {
+        binding.btnResponse1.isEnabled = false
+        binding.btnResponse2.isEnabled = false
+        binding.btnResponse3.isEnabled = false
+    }
+
+    private fun enableBtn() {
+        binding.btnResponse1.isEnabled = true
+        binding.btnResponse2.isEnabled = true
+        binding.btnResponse3.isEnabled = true
+    }
 
 }
 

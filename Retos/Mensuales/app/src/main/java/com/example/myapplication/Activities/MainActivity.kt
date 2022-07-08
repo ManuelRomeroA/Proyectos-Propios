@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun goToQuiz() {
         val nameUser = binding.etName.text.toString()
+        nameUser.trim().uppercase()
         val intent = Intent(this, QuizActivity::class.java)
         intent.putExtra("NAME", nameUser)
         startActivity(intent)
