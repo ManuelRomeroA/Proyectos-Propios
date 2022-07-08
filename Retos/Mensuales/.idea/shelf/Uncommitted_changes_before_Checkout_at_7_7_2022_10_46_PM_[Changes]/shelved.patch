@@ -1,0 +1,53 @@
+Index: app/src/main/java/com/example/myapplication/Activities/QuizActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.myapplication.Activities\r\n\r\nimport android.content.Intent\r\nimport android.graphics.Color\r\nimport android.os.Bundle\r\nimport android.os.CountDownTimer\r\nimport android.widget.Toast\r\nimport androidx.appcompat.app.AppCompatActivity\r\nimport com.bumptech.glide.Glide\r\nimport com.example.myapplication.QuestionProvider.Question\r\nimport com.example.myapplication.QuestionProvider.QuestionProvider\r\nimport com.example.myapplication.R\r\nimport com.example.myapplication.databinding.ActivityQuizBinding\r\n\r\n\r\nclass QuizActivity : AppCompatActivity() {\r\n\r\n    private val questionList: MutableList<Question> = QuestionProvider.QuestionList\r\n    private var question: Question = questionList.random()\r\n    private var cont = 0\r\n    private val timer: CountDownTimer? = timer()\r\n    private val feedBackTimer: CountDownTimer? = feedBackTimer()\r\n\r\n    private lateinit var binding: ActivityQuizBinding\r\n    override fun onCreate(savedInstanceState: Bundle?) {\r\n        super.onCreate(savedInstanceState)\r\n        binding = ActivityQuizBinding.inflate(layoutInflater)\r\n        setContentView(binding.root)\r\n        quiz()\r\n    }\r\n\r\n    private fun quiz() {\r\n        buildQuestion(question, cont)\r\n\r\n        binding.btnResponse1.setOnClickListener {\r\n            if (selectionResponse1(question)) {\r\n                cont += 1\r\n                nextQuestion(questionList, cont)\r\n\r\n            } else {\r\n                timer?.cancel()\r\n                feedBackTimer?.start()\r\n            }\r\n\r\n        }\r\n        binding.btnResponse2.setOnClickListener {\r\n            if (selectionResponse2(question)) {\r\n                cont += 1\r\n                nextQuestion(questionList, cont)\r\n            } else {\r\n                timer?.cancel()\r\n                feedBackTimer?.start()\r\n            }\r\n        }\r\n        binding.btnResponse3.setOnClickListener {\r\n            if (selectionResponse3(question)) {\r\n                cont += 1\r\n                nextQuestion(questionList, cont)\r\n\r\n            } else {\r\n                timer?.cancel()\r\n                feedBackTimer?.start()\r\n            }\r\n        }\r\n    }\r\n\r\n    private fun nextQuestion(questionList: MutableList<Question>, cont: Int) {\r\n        goToResult(questionList, cont)\r\n        questionList.remove(question)\r\n        question = questionList.random()\r\n        buildQuestion(question, cont)\r\n    }\r\n\r\n    private fun timer(): CountDownTimer? {\r\n        val initTimer: Long = 31\r\n        val timerMilisecond: Long = initTimer * 1000\r\n        timer?.cancel()\r\n        val timer = object : CountDownTimer(timerMilisecond, 1000) {\r\n            override fun onTick(millisUntilFinished: Long) {\r\n                val timerSeconds: Int = (millisUntilFinished / 1000).toInt()\r\n                binding.tvTimer.text = timerSeconds.toString()\r\n                styleTime(timerSeconds)\r\n            }\r\n\r\n            override fun onFinish() {\r\n                Toast.makeText(this@QuizActivity, \"El Telefono Vibra\", Toast.LENGTH_LONG).show()\r\n                feedBackTimer?.start()\r\n\r\n            }\r\n        }.start()\r\n        return timer\r\n    }\r\n\r\n    private fun feedBackTimer(): CountDownTimer {\r\n        timer?.cancel()\r\n\r\n        val feedBackTimer = object : CountDownTimer(3000, 1000) {\r\n            override fun onTick(millisUntilFinished: Long) {\r\n                disableBtn()\r\n                when (question.answer) {\r\n                    question.response1 -> {\r\n                        binding.btnResponse1.setTextColor(Color.GREEN)\r\n                    }\r\n                    question.response2 -> {\r\n                        binding.btnResponse2.setTextColor(Color.GREEN)\r\n                    }\r\n                    question.response3 -> {\r\n                        binding.btnResponse3.setTextColor(Color.GREEN)\r\n                    }\r\n                }\r\n            }\r\n\r\n            override fun onFinish() {\r\n                nextQuestion(questionList, cont)\r\n\r\n            }\r\n        }\r\n        return feedBackTimer\r\n    }\r\n\r\n    fun buildQuestion(question: Question?, cont: Int) {\r\n        val tvQuestion = binding.tvQuestion\r\n        val tvCont = binding.tvContador\r\n        val btnResponse1 = binding.btnResponse1\r\n        val btnResponse2 = binding.btnResponse2\r\n        val btnResponse3 = binding.btnResponse3\r\n        enableBtn()\r\n        if (question != null) {\r\n            //Titulo\r\n            tvQuestion.text = question.question\r\n            //Response1\r\n            btnResponse1.text = question.response1\r\n            btnResponse1.setTextColor(Color.BLACK)\r\n            //Response2\r\n            btnResponse2.text = question.response2\r\n            btnResponse2.setTextColor(Color.BLACK)\r\n            //Response3\r\n            btnResponse3.text = question.response3\r\n            btnResponse3.setTextColor(Color.BLACK)\r\n            //Imagen\r\n            Glide.with(this).load(question.image).into(binding.ivQuestion)\r\n            //Contador\r\n            tvCont.text = cont.toString()\r\n            //Inicio Timer\r\n            timer?.cancel()\r\n            timer?.start()\r\n        }\r\n    }\r\n\r\n    fun selectionResponse1(question: Question): Boolean {\r\n        if (question.answer == question.response1) {\r\n            return true\r\n        }\r\n        return false\r\n    }\r\n\r\n    fun selectionResponse2(question: Question): Boolean {\r\n        if (question.answer == question.response2) {\r\n            return true\r\n        }\r\n        return false\r\n    }\r\n\r\n    fun selectionResponse3(question: Question): Boolean {\r\n        if (question.answer == question.response3) {\r\n            return true\r\n        }\r\n        return false\r\n    }\r\n\r\n    private fun goToResult(list: MutableList<Question>, cont: Int) {\r\n        if (list.size == 1) {\r\n            val intent = Intent(this, ResultActivity::class.java)\r\n            val userName = getResult()\r\n            intent.putExtra(\"NAME\", userName)\r\n            intent.putExtra(\"RESULTADO\", cont)\r\n            startActivity(intent)\r\n        }\r\n    }\r\n\r\n    private fun getResult(): String {\r\n        val bundle = intent.extras\r\n        val userName = bundle?.get(\"NAME\")\r\n        return userName.toString()\r\n\r\n    }\r\n\r\n    private fun styleTime(timerSeconds: Int) {\r\n        val styleTime = binding.tvTimer\r\n        when (timerSeconds) {\r\n            in 16..31 -> {\r\n                styleTime.setTextColor(Color.GREEN)\r\n                styleTime.setBackgroundResource(R.drawable.shape_timer_green)\r\n            }\r\n            in 6..15 -> {\r\n                styleTime.setTextColor(Color.YELLOW)\r\n                styleTime.setBackgroundResource(R.drawable.shape_timer_yellow)\r\n            }\r\n\r\n            in 0..5 -> {\r\n                styleTime.setTextColor(Color.RED)\r\n                styleTime.setBackgroundResource(R.drawable.shape_timer_red)\r\n            }\r\n        }\r\n    }\r\n\r\n    private fun disableBtn() {\r\n        binding.btnResponse1.isEnabled = false\r\n        binding.btnResponse2.isEnabled = false\r\n        binding.btnResponse3.isEnabled = false\r\n    }\r\n\r\n    private fun enableBtn() {\r\n        binding.btnResponse1.isEnabled = true\r\n        binding.btnResponse2.isEnabled = true\r\n        binding.btnResponse3.isEnabled = true\r\n    }\r\n\r\n}\r\n\r\n
+===================================================================
+diff --git a/app/src/main/java/com/example/myapplication/Activities/QuizActivity.kt b/app/src/main/java/com/example/myapplication/Activities/QuizActivity.kt
+--- a/app/src/main/java/com/example/myapplication/Activities/QuizActivity.kt	
++++ b/app/src/main/java/com/example/myapplication/Activities/QuizActivity.kt	
+@@ -19,7 +19,7 @@
+     private var question: Question = questionList.random()
+     private var cont = 0
+     private val timer: CountDownTimer? = timer()
+-    private val feedBackTimer: CountDownTimer? = feedBackTimer()
++    private val feedBackTimer: CountDownTimer = feedBackTimer()
+ 
+     private lateinit var binding: ActivityQuizBinding
+     override fun onCreate(savedInstanceState: Bundle?) {
+@@ -39,7 +39,7 @@
+ 
+             } else {
+                 timer?.cancel()
+-                feedBackTimer?.start()
++                feedBackTimer.start()
+             }
+ 
+         }
+@@ -49,7 +49,7 @@
+                 nextQuestion(questionList, cont)
+             } else {
+                 timer?.cancel()
+-                feedBackTimer?.start()
++                feedBackTimer.start()
+             }
+         }
+         binding.btnResponse3.setOnClickListener {
+@@ -59,7 +59,7 @@
+ 
+             } else {
+                 timer?.cancel()
+-                feedBackTimer?.start()
++                feedBackTimer.start()
+             }
+         }
+     }
+@@ -84,7 +84,7 @@
+ 
+             override fun onFinish() {
+                 Toast.makeText(this@QuizActivity, "El Telefono Vibra", Toast.LENGTH_LONG).show()
+-                feedBackTimer?.start()
++                feedBackTimer.start()
+ 
+             }
+         }.start()
