@@ -21,11 +21,9 @@
                 {
                     "source": "C:\\Users\\Manuel\\Documents\\Proyectos de Manuel\\Retos\\Mensuales\\app\\src\\main\\res\\values\\colors.xml",
                     "from": {
-                        "startLines": "-1,-1,-1,-1,9,11,10,-1,-1,-1",
-                        "startColumns": "-1,-1,-1,-1,4,4,4,-1,-1,-1",
-                        "startOffsets": "-1,-1,-1,-1,370,463,416,-1,-1,-1",
-                        "endColumns": "-1,-1,-1,-1,45,43,46,-1,-1,-1",
-                        "endOffsets": "-1,-1,-1,-1,411,502,458,-1,-1,-1"
+                        "startLines": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1",
+                        "startColumns": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1",
+                        "startOffsets": "-1,-1,-1,-1,-1,-1,-1,-1,-1,-1"
                     },
                     "to": {
                         "startLines": "580,804,805,806,813,814,815,820,821,825",
@@ -238,9 +236,12 @@
                 {
                     "source": "C:\\Users\\Manuel\\Documents\\Proyectos de Manuel\\Retos\\Mensuales\\app\\src\\main\\res\\values\\themes.xml",
                     "from": {
-                        "startLines": "-1,-1,-1,-1",
-                        "startColumns": "-1,-1,-1,-1",
-                        "startOffsets": "-1,-1,-1,-1"
+                        "startLines": "2,-1,-1,-1",
+                        "startColumns": "4,-1,-1,-1",
+                        "startOffsets": "102,-1,-1,-1",
+                        "endLines": "14,-1,-1,-1",
+                        "endColumns": "12,-1,-1,-1",
+                        "endOffsets": "836,-1,-1,-1"
                     },
                     "to": {
                         "startLines": "5825,5838,5839,5843",
